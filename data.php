@@ -4,9 +4,8 @@
 	$data = array();
 	$arr = array();
 
-	$sql = "SELECT * FROM quan_ly_tiec_cuoi.`table`";
+	$sql = "SELECT * FROM `table`";
 	$result = DataProvider::ExecuteQuery($sql);
-	
 	while ($row = mysql_fetch_array($result)) {
 		$item = array();
 		$item['id'] = $row['id'];

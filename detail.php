@@ -3,9 +3,9 @@
 
 	$data = array();
 
-	$id = $_POST['id'];
+	$id = $_POST['code'];
 
-	$sql = "SELECT guest FROM quan_ly_tiec_cuoi.`guest_table` WHERE id_table = ".$id;
+	$sql = "SELECT guest FROM `guest_table` WHERE id_table = ".$id;
 	$result = DataProvider::ExecuteQuery($sql);
 	if(count($result) > 0){
 		while ($row = mysql_fetch_array($result)) {
