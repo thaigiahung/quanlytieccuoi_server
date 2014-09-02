@@ -13,10 +13,10 @@
 		$item['current_num_of_guest'] = $row['current_num_of_guest'];
 		$item['status'] = $row['status'];
 
-		array_push($arr, $item);
+		array_push($data, $item);
 	}
-	$data['count'] = count($arr);
-	$data['data'] = $arr;
+	// $data['count'] = count($arr);
+	// $data['data'] = $arr;
 
 	echo json_encode($data);
 ?>
