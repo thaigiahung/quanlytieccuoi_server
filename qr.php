@@ -1,7 +1,7 @@
 <?php 
-	for($i = 5; $i <= 500; $i++)
+	for($i = 1; $i <= 500; $i++)
 	{
-		$data="size=40&data=$i&dataType=text&color=000000&icon=www-2&imageType=custom&imageUrl=http%3A%2F%2Fwww.qrcode-monkey.com%2Fuploads%2F5a9ecd59b1feece3853c4eaca74ec6bc.png&effect=0";
+		$data="size=40&data=$i&dataType=text&color=156B07&icon=www-2&imageType=custom&imageUrl=http%3A%2F%2Fwww.qrcode-monkey.com%2Fuploads%2F35fea2141b0d6547cd0747dc482583a9.png&effect=0";
 		$url="http://www.qrcode-monkey.com/qr-code-generator.php";
 
 		$ch = curl_init();

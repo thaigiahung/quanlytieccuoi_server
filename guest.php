@@ -45,6 +45,17 @@
 	<?php  
 		include_once("DataProvider.php");
 
+		if (session_status() == PHP_SESSION_NONE) {
+		    session_start();
+		}
+
+		if(isset($_POST['btnSearch']))
+		{
+			$_SESSION['Search'] = $_POST['rdoSearch'];
+			if(isset($_POST['txtKeyword']))
+				$_SESSION['Keyword'] = $_POST['txtKeyword'];
+		}
+
 		if(isset($_POST['btnInsert']))
 		{
 			$name = $_POST['txtName'];
@@ -243,6 +254,76 @@
 			
 			<!-- start: Content -->
 			<div id="content" class="span11">
+
+			<div class="row-fluid">
+				
+				<!-- Tìm kiếm -->
+				<div class="box span12">
+					<div class="box-header">
+						<h2><i class="halflings-icon align-justify"></i><span class="break"></span>Tìm kiếm</h2>
+					</div>
+					<div class="box-content">
+						<form class="form-horizontal" name="frmQLTK" method="post" action="guest.php"/>						
+						  <fieldset>
+							<div class="control-group">
+							  <label class="control-label">Từ khóa </label>
+							  <div class="controls">
+							  	<input type="text" class="span6" name="txtKeyword" id="txtKeyword" />					
+							  </div>
+							</div>									
+
+							<div class="control-group">
+								<label class="control-label">Loại </label>
+								<div class="controls">									
+									<label class="radio">
+										<?php  
+											if(isset($_SESSION['Search']))
+											{
+												$sSearch = $_SESSION['Search'];
+											}
+											else
+											{
+												$sSearch = 0;
+											}
+										?>
+										<input type="radio" name="rdoSearch" id="rdoSearch1" onchange="changeSearchType()" value="0"
+											<?php 
+												if($sSearch == 0)
+										            echo "checked=''";
+										    ?>
+										/>Tất cả
+									</label>
+									<div style="clear:both"></div>
+									<label class="radio">
+										<input type="radio" name="rdoSearch" id="rdoSearch2" onchange="changeSearchType()" value="1"
+											<?php 
+												if($sSearch == 1)
+										            echo "checked=''";
+										    ?>
+										/>Từ khóa
+									</label>
+									<div style="clear:both"></div>
+									<label class="radio">
+										<input type="radio" name="rdoSearch" id="rdoSearch3" onchange="changeSearchType()" value="2"
+											<?php 
+												if($sSearch == 2)
+										            echo "checked=''";
+										    ?>
+										/>Chưa có bàn
+									</label>				    
+								</div>
+							</div>				
+
+							<div class="form-actions">
+							  <button type="submit" class="btn" name="btnSearch">Tìm</button>
+							</div>
+						  </fieldset>
+						</form> 						 
+					</div>
+				</div><!--/span-->
+				<!-- End Danh sách -->	
+			
+			</div>
 			
 			
 			<div class="row-fluid">
@@ -266,13 +347,43 @@
 				        // set position of the next/previous page links
 				        $pagination->navigation_position(isset($_GET['navigation_position']) && in_array($_GET['navigation_position'], array('left', 'right')) ? $_GET['navigation_position'] : 'outside');
 
-				        include_once("DataProvider.php");
-
-				        $sql = "SELECT SQL_CALC_FOUND_ROWS g.`id`, g.`name`, g.`group`, g.`description`, t.`name` AS 'table_name'
-				        		FROM guest g LEFT JOIN guest_table gt ON gt.id_guest = g.id 
-				        						LEFT JOIN `table` t ON t.id = gt.id_table
-				        		ORDER BY g.id
-				        		LIMIT ".($pagination->get_page()-1)*$records_per_page.",".$records_per_page;
+				        if(isset($_SESSION['Search']))
+				        {
+					        if($_SESSION['Search'] == 1) //Từ khóa
+					        {
+					        	$sql = "SELECT SQL_CALC_FOUND_ROWS g.`id`, g.`name`, g.`group`, g.`description`, t.`name` AS 'table_name'
+					        			FROM guest g LEFT JOIN guest_table gt ON gt.id_guest = g.id 
+					        							LEFT JOIN `table` t ON t.id = gt.id_table
+		    							WHERE g.`name` LIKE '%".$_SESSION['Keyword']."%'
+					        			ORDER BY g.id
+					        			LIMIT ".($pagination->get_page()-1)*$records_per_page.",".$records_per_page;
+					        }
+					        else if($_SESSION['Search'] == 2) //Chưa có bàn
+					        {
+					        	$sql = "SELECT SQL_CALC_FOUND_ROWS g.`id`, g.`name`, g.`group`, g.`description`, t.`name` AS 'table_name'
+					        			FROM guest g LEFT JOIN guest_table gt ON gt.id_guest = g.id 
+					        							LEFT JOIN `table` t ON t.id = gt.id_table
+	        							WHERE t.`name` IS NULL
+					        			ORDER BY g.id
+					        			LIMIT ".($pagination->get_page()-1)*$records_per_page.",".$records_per_page;
+					        }
+					        else //Tất cả
+					        {
+					        	$sql = "SELECT SQL_CALC_FOUND_ROWS g.`id`, g.`name`, g.`group`, g.`description`, t.`name` AS 'table_name'
+					        			FROM guest g LEFT JOIN guest_table gt ON gt.id_guest = g.id 
+					        							LEFT JOIN `table` t ON t.id = gt.id_table
+					        			ORDER BY g.id
+					        			LIMIT ".($pagination->get_page()-1)*$records_per_page.",".$records_per_page;
+					        }
+				        }				        
+				        else //Tất cả
+				        {
+				        	$sql = "SELECT SQL_CALC_FOUND_ROWS g.`id`, g.`name`, g.`group`, g.`description`, t.`name` AS 'table_name'
+				        			FROM guest g LEFT JOIN guest_table gt ON gt.id_guest = g.id 
+				        							LEFT JOIN `table` t ON t.id = gt.id_table
+				        			ORDER BY g.id
+				        			LIMIT ".($pagination->get_page()-1)*$records_per_page.",".$records_per_page;
+				        }				        
 
 				        $result = DataProvider::ExecuteQuery($sql);
 
@@ -533,12 +644,31 @@
 	<script src="./js/custom.js"></script>
 	<!-- end: JavaScript-->
 	<script>
+		$(document).ready(function(){
+			console.log("ready");
+			changeSearchType();
+		})
+
 		function formReset()
 		{			
 			document.getElementById("lblId").innerHTML = "";
 			document.getElementById("txtName").value = "";
 			document.getElementById("txtDescription").value = "";
 		}	
+
+		function changeSearchType () {
+		    var rdoSearch1 =  document.getElementById("rdoSearch1").checked;
+		    var rdoSearch2 =  document.getElementById("rdoSearch2").checked;
+		    var rdoSearch3 =  document.getElementById("rdoSearch3").checked;
+		    
+		    if(rdoSearch1 || rdoSearch3)
+		    {
+		    	$("#txtKeyword").attr("disabled",true);
+		    }
+		    else{
+		    	$("#txtKeyword").removeAttr("disabled");
+		    }
+		}
 	</script>
 </body>
 </html>
