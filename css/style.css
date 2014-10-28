@@ -3260,8 +3260,8 @@ ul.messagesList li span.date {
 .table-item-normal{
 	display: inline-block;
 	vertical-align: middle;
-	height: 125px;
-	width: 150px;
+	height: 150px;
+	width: 200px;
 	text-align: center;
 	background: lightgray;
 	border: 1px solid;
@@ -3276,8 +3276,8 @@ ul.messagesList li span.date {
 .table-item-full{
 	display: inline-block;
 	vertical-align: middle;
-	height: 125px;
-	width: 150px;
+	height: 150px;
+	width: 200px;
 	text-align: center;
 	background: lime;
 	border: 1px solid;
@@ -3287,4 +3287,14 @@ ul.messagesList li span.date {
 
 .table-item-full:hover{
 	background: lightgreen;
+}
+
+.table-item-header{
+	font-size: 20px;
+	padding: 10px 0;
+	border-bottom: 1px solid;
+}
+
+.table-item-content{
+	padding-top: 10px;
 }

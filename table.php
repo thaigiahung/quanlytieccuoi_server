@@ -134,10 +134,12 @@
 							  		else
 							  			$class_name = "table-item-full";
 							  		echo '<a href="guest-table.php?id='.$row['id'].'">
-								  				<div class="'.$class_name.'">								  					
-								  					Tống số: '.$row['total_num_of_guest'].'<br />
-								  					Hiện tại: '.$row['current_num_of_guest'].'<br />
-													'.$row['name'].'								  										  					
+								  				<div class="'.$class_name.'">		
+								  					<div class="table-item-header">'.$row['name'].'</div>
+								  					<div class="table-item-content">
+														Tống số: '.$row['total_num_of_guest'].'<br />
+														Hiện tại: '.$row['current_num_of_guest'].'
+								  					</div>																			  										  					
 								  				</div>
 							  				</a>
 						  				';
