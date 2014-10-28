@@ -5,20 +5,34 @@
 
 	include_once("DataProvider.php");
 	$code = $_POST['code'];
-	echo $code."<br>";
-	$arr = explode(",", $code);
-	$sql = "INSERT INTO `guest_table`(`id_table`, `guest`) VALUES (".$arr[1].",'".$arr[0]."')";
-	echo $sql;
+
+	//Đánh dấu khách đã đến
+	$sql = "UPDATE `guest_table` SET status = 1 WHERE id_guest = ".$code;
+	echo $sql."<br>";
 	DataProvider::ExecuteQuery($sql);
 
-	$sql = "SELECT COUNT(*) AS num_of_guest FROM `guest_table` WHERE id_table = ".$arr[1];
+	//Tìm bàn của khách này
+	$sql = "SELECT t.* 
+			FROM `guest_table` gt LEFT JOIN `table` t ON t.id = gt.id_table 
+			WHERE gt.id_guest = ".$code;
+			echo $sql."<br>";
+	$result = DataProvider::ExecuteQuery($sql);
+	$table = mysql_fetch_array($result);
+
+	//Đếm số lượng khách đã đến của bàn đó
+	$sql = "SELECT COUNT(*) AS num_of_guest FROM `guest_table` WHERE status = 1 AND id_table = ".$table['id'];
+	echo $sql."<br>";
 	$result = DataProvider::ExecuteQuery($sql);
 	$row = mysql_fetch_array($result);
 
 	$status = 0;
-	if($row['num_of_guest'] >= 10)
+	if($row['num_of_guest'] >= $table['total_num_of_guest'])
 		$status = 1;
 
-	$sql = "UPDATE `table` SET `current_num_of_guest`=".$row['num_of_guest'].",`status`=$status WHERE id = ".$arr[1];
+	//Cập nhật current_num_of_guest của bàn đó
+	$sql = "UPDATE `table` SET `current_num_of_guest`=".$row['num_of_guest'].",`status`=$status WHERE id = ".$table['id'];
+	echo $sql."<br>";
 	DataProvider::ExecuteQuery($sql);
+
+	echo "Xong";
 ?>

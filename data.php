@@ -9,6 +9,8 @@
 	while ($row = mysql_fetch_array($result)) {
 		$item = array();
 		$item['id'] = $row['id'];
+		$item['name'] = $row['name'];
+		$item['total_num_of_guest'] = $row['total_num_of_guest'];
 		$item['current_num_of_guest'] = $row['current_num_of_guest'];
 		$item['status'] = $row['status'];
 
