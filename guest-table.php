@@ -45,39 +45,28 @@
 	<?php  
 		include_once("DataProvider.php");
 
-		if(isset($_POST['btnInsert']))
+		if(isset($_GET['guest']))
 		{
-			$name = $_POST['txtName'];
-			$name_ascii = DataProvider::Utf8ToAscii($name);
-			$group = $_POST['rdoGroup'];
-			$description = $_POST['txtDescription'];
+			$id_table = $_GET['id'];
+			$id_guest = $_GET['guest'];
 
-			$sql = "INSERT INTO guest(`name`,`name_ascii`,`group`,`description`) 
-					VALUES('$name','$name_ascii',$group,'$description')";
+			//Xóa người này khỏi guest_table
+			$sql = "DELETE FROM `guest_table` WHERE id_table = $id_table AND id_guest = $id_guest";
+			DataProvider::ExecuteQuery($sql);
 
-			DataProvider::ExecuteQuery($sql);
-			DataProvider::Redirect("guest.php");
-		}
-		else if(isset($_POST['btnUpdate']))
-		{
-			$id = $_POST['hdId'];
-			$name = $_POST['txtName'];
-			$name_ascii = DataProvider::Utf8ToAscii($name);
-			$group = $_POST['rdoGroup'];
-			$description = $_POST['txtDescription'];
+			//Đếm tổng số người của table này
+			$sql = "SELECT COUNT(*) AS count FROM `guest_table` WHERE id_table = ".$id_table;
+			$result = DataProvider::ExecuteQuery($sql);
+			$row = mysql_fetch_array($result);
+			$count = $row['count'];
 
-			$sql = "UPDATE guest
-					SET `name`='$name',`name_ascii`='$name_ascii',`group`=$group,`description`='$description'
-					WHERE id = ".$id;
+			//Update total_num_of_guest
+			$sql = "UPDATE `table`
+					SET `total_num_of_guest`=$count
+					WHERE id = ".$id_table;
 			DataProvider::ExecuteQuery($sql);
-			DataProvider::Redirect("guest.php");	
-		}
-		else if(isset($_POST['btnDelete']))
-		{
-			$id = $_POST['hdId'];
-			$sql = "DELETE FROM guest WHERE id = ".$id;
-			DataProvider::ExecuteQuery($sql);
-			DataProvider::Redirect("guest.php");	
+
+			DataProvider::Redirect("guest-table.php?id=".$id_table);	
 		}
 	?>
 	
@@ -89,7 +78,7 @@
 				<div class="nav-collapse sidebar-nav">
 					<ul class="nav nav-tabs nav-stacked main-menu">
 						<li><a href="./guest.php"><i class="fa-icon-bar-chart"></i><span class="hidden-tablet"> Khách</span></a></li>	
-						<li class="active"><a href="./table.php"><i class="fa-icon-hdd"></i><span class="hidden-tablet"> Bàn</span></a></li>
+						<li><a href="./table.php"><i class="fa-icon-hdd"></i><span class="hidden-tablet"> Bàn</span></a></li>
 					</ul>
 				</div>
 			</div>
@@ -108,48 +97,74 @@
 			
 			<!-- start: Content -->
 			<div id="content" class="span11">
-			
-			
+				
 			<div class="row-fluid">
 				
 				<!-- Danh sách -->
 				<div class="box span12">
 					<div class="box-header">
-						<h2><i class="halflings-icon align-justify"></i><span class="break"></span>Danh sách bàn tiệc</h2>
+						<h2><i class="halflings-icon align-justify"></i><span class="break"></span>Danh sách khách mời</h2>
 					</div>
 					<div class="box-content">
-						<div class="table-content">
-							<?php	
-						        include_once("DataProvider.php");
+						<?php	 
+						$id_table = $_GET['id'];
+						$sql = "SELECT g.`id`, g.`name`, g.`group`, g.`description`, t.`name` AS 'table_name'
+								FROM guest g LEFT JOIN guest_table gt ON gt.id_guest = g.id 
+												LEFT JOIN `table` t ON t.id = gt.id_table
+								WHERE t.id = ".$id_table."
+								ORDER BY g.id";
+				        $result = DataProvider::ExecuteQuery($sql);
+				        ?>
+						<table class="table">
+							  <thead>
+								  <tr>
+									  <th>Mã</th>
+									  <th>Tên</th>
+									  <th>Đàn</th>
+									  <th>Bàn</th>
+									  <th>Mô tả</th>                                
+								  </tr>
+							  </thead>   
+							  <tbody>
+							  	<?php			                   
 
-						        $sql = "SELECT *
-						        		FROM `table`
-						        		ORDER BY id";
-
-						        $result = DataProvider::ExecuteQuery($sql);
-						        while($row = mysql_fetch_array($result))
+							  	while($row = mysql_fetch_array($result))
 							  	{
-							  		if ($row['status'] == 0)
-							  			$class_name = "table-item-normal";							  		
-							  		else
-							  			$class_name = "table-item-full";
-							  		echo '<a href="guest-table.php?id='.$row['id'].'">
-								  				<div class="'.$class_name.'">								  					
-								  					Tống số: '.$row['total_num_of_guest'].'<br />
-								  					Hiện tại: '.$row['current_num_of_guest'].'<br />
-													'.$row['name'].'								  										  					
-								  				</div>
-							  				</a>
-						  				';
+						  		?>
+							  		<tr>
+							  			<td><?php echo $row['id']; ?></td>
+							  			<td><?php echo $row['name']; ?></td> 
+							  			<td>
+							  				<?php 
+							  					switch ($row['group']) {
+							  						case 0:
+							  							echo 'Gái';
+							  							break;
+							  						case 1:
+							  							echo 'Trai';
+							  							break;
+						  							case 2:
+							  							echo 'Bạn chung';
+							  							break;
+							  					}
+						  					?>
+							  			</td>
+							  			<td><?php echo $row['table_name']; ?></td>
+							  			<td><?php echo $row['description']; ?></td>							  			
+							  			<td><a href="guest-table.php?id=<?php echo $id_table; ?>&guest=<?php echo $row['id']; ?>">Xóa</a></td>
+							  		</tr> 
+						  		<?php
 							  	}
-					        ?>
-						</div>												 
+							  	?>                               
+							  </tbody>
+						 </table>  				 
 					</div>
 				</div><!--/span-->
 				<!-- End Danh sách -->	
 			
 			</div>	       
 			<!-- end: Content -->
+
 
 		</div><!--/#content.span10-->
 	</div><!--/fluid-row-->
@@ -217,13 +232,5 @@
 	<script src="./js/retina.js"></script>
 	<script src="./js/custom.js"></script>
 	<!-- end: JavaScript-->
-	<script>
-		function formReset()
-		{			
-			document.getElementById("lblId").innerHTML = "";
-			document.getElementById("txtName").value = "";
-			document.getElementById("txtDescription").value = "";
-		}	
-	</script>
 </body>
 </html>
