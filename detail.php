@@ -7,7 +7,7 @@
 
 	$sql = "SELECT g.name as guest 
 			FROM `guest_table` gt JOIN `guest` g ON g.id = gt.id_guest
-			WHERE id_table = ".$id;
+			WHERE status = 1 AND id_table = ".$id;
 	$result = DataProvider::ExecuteQuery($sql);
 	if(count($result) > 0){
 		while ($row = mysql_fetch_array($result)) {
