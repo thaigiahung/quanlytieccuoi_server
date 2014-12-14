@@ -45,6 +45,11 @@
 	<?php  
 		include_once("DataProvider.php");
 
+		if(!isset($_GET['id']))
+		{
+			DataProvider::Redirect("table.php");
+		}
+
 		if(isset($_GET['guest']))
 		{
 			$id_table = $_GET['id'];
@@ -78,7 +83,8 @@
 				<div class="nav-collapse sidebar-nav">
 					<ul class="nav nav-tabs nav-stacked main-menu">
 						<li><a href="./guest.php"><i class="fa-icon-bar-chart"></i><span class="hidden-tablet"> Khách</span></a></li>	
-						<li><a href="./table.php"><i class="fa-icon-hdd"></i><span class="hidden-tablet"> Bàn</span></a></li>
+						<li><a class="active" href="./table.php"><i class="fa-icon-hdd"></i><span class="hidden-tablet"> Bàn</span></a></li>
+						<li><a href="./checkin.php"><i class="fa-icon-bar-chart"></i><span class="hidden-tablet"> Quét code</span></a></li>	
 					</ul>
 				</div>
 			</div>
@@ -108,7 +114,7 @@
 					<div class="box-content">
 						<?php	 
 						$id_table = $_GET['id'];
-						$sql = "SELECT g.`id`, g.`name`, g.`group`, g.`description`, t.`name` AS 'table_name'
+						$sql = "SELECT g.`id`, g.`name`, g.`group`, g.`description`, t.`name` AS 'table_name', gt.`status`
 								FROM guest g LEFT JOIN guest_table gt ON gt.id_guest = g.id 
 												LEFT JOIN `table` t ON t.id = gt.id_table
 								WHERE t.id = ".$id_table."
@@ -122,7 +128,8 @@
 									  <th>Tên</th>
 									  <th>Đàn</th>
 									  <th>Bàn</th>
-									  <th>Mô tả</th>                                
+									  <th>Mô tả</th> 
+									  <th>Trạng thái</th>                                
 								  </tr>
 							  </thead>   
 							  <tbody>
@@ -150,7 +157,15 @@
 						  					?>
 							  			</td>
 							  			<td><?php echo $row['table_name']; ?></td>
-							  			<td><?php echo $row['description']; ?></td>							  			
+							  			<td><?php echo $row['description']; ?></td>	
+							  			<td>
+							  				<?php 
+							  					if($row['status'] == 1)
+							  						echo "Đã tới";
+							  					else
+							  						echo "Chưa tới";
+							  				?>
+							  			</td>							  			
 							  			<td><a href="guest-table.php?id=<?php echo $id_table; ?>&guest=<?php echo $row['id']; ?>">Xóa</a></td>
 							  		</tr> 
 						  		<?php

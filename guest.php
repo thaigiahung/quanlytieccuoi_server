@@ -236,6 +236,7 @@
 					<ul class="nav nav-tabs nav-stacked main-menu">
 						<li class="active"><a href="./guest.php"><i class="fa-icon-bar-chart"></i><span class="hidden-tablet"> Khách</span></a></li>	
 						<li><a href="./table.php"><i class="fa-icon-hdd"></i><span class="hidden-tablet"> Bàn</span></a></li>
+						<li><a href="./checkin.php"><i class="fa-icon-bar-chart"></i><span class="hidden-tablet"> Quét code</span></a></li>	
 					</ul>
 				</div>
 			</div>
