@@ -158,7 +158,7 @@
 												if($sSearch == 1)
 										            echo "checked=''";
 										    ?>
-										/>Tên
+										/>Từ khóa
 									</label>
 									<div style="clear:both"></div>				    
 								</div>
@@ -199,12 +199,12 @@
 
 				        if(isset($_SESSION['Search']))
 				        {
-					        if($_SESSION['Search'] == 1) //name
+					        if($_SESSION['Search'] == 1) //keyword
 					        {
 					        	$sql = "SELECT SQL_CALC_FOUND_ROWS g.`id`, g.`name`, g.`group`, g.`description`, t.`name` AS 'table_name', gt.`id_table`, gt.`status`
 					        			FROM guest g LEFT JOIN guest_table gt ON gt.id_guest = g.id 
 					        							LEFT JOIN `table` t ON t.id = gt.id_table
-		    							WHERE g.`name` LIKE '%".$_SESSION['Keyword']."%'
+		    							WHERE g.`name` LIKE '%".$_SESSION['Keyword']."%' OR g.`description` LIKE '%".$_SESSION['Keyword']."%'
 					        			ORDER BY g.id
 					        			LIMIT ".($pagination->get_page()-1)*$records_per_page.",".$records_per_page;
 					        }
