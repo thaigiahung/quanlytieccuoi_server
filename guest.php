@@ -352,7 +352,7 @@
 				        {
 					        if($_SESSION['Search'] == 1) //Từ khóa
 					        {
-					        	$sql = "SELECT SQL_CALC_FOUND_ROWS g.`id`, g.`name`, g.`group`, g.`description`, t.`name` AS 'table_name'
+					        	$sql = "SELECT SQL_CALC_FOUND_ROWS g.`id`, g.`name`, g.`group`, g.`money`,g.`description`, t.`name` AS 'table_name'
 					        			FROM guest g LEFT JOIN guest_table gt ON gt.id_guest = g.id 
 					        							LEFT JOIN `table` t ON t.id = gt.id_table
 		    							WHERE g.`name` LIKE '%".$_SESSION['Keyword']."%' OR g.`description` LIKE '%".$_SESSION['Keyword']."%'
@@ -361,7 +361,7 @@
 					        }
 					        else if($_SESSION['Search'] == 2) //Chưa có bàn
 					        {
-					        	$sql = "SELECT SQL_CALC_FOUND_ROWS g.`id`, g.`name`, g.`group`, g.`description`, t.`name` AS 'table_name'
+					        	$sql = "SELECT SQL_CALC_FOUND_ROWS g.`id`, g.`name`, g.`group`, g.`money`, g.`description`, t.`name` AS 'table_name'
 					        			FROM guest g LEFT JOIN guest_table gt ON gt.id_guest = g.id 
 					        							LEFT JOIN `table` t ON t.id = gt.id_table
 	        							WHERE t.`name` IS NULL
@@ -370,7 +370,7 @@
 					        }
 					        else //Tất cả
 					        {
-					        	$sql = "SELECT SQL_CALC_FOUND_ROWS g.`id`, g.`name`, g.`group`, g.`description`, t.`name` AS 'table_name'
+					        	$sql = "SELECT SQL_CALC_FOUND_ROWS g.`id`, g.`name`, g.`group`, g.`money`, g.`description`, t.`name` AS 'table_name'
 					        			FROM guest g LEFT JOIN guest_table gt ON gt.id_guest = g.id 
 					        							LEFT JOIN `table` t ON t.id = gt.id_table
 					        			ORDER BY g.id
@@ -379,7 +379,7 @@
 				        }				        
 				        else //Tất cả
 				        {
-				        	$sql = "SELECT SQL_CALC_FOUND_ROWS g.`id`, g.`name`, g.`group`, g.`description`, t.`name` AS 'table_name'
+				        	$sql = "SELECT SQL_CALC_FOUND_ROWS g.`id`, g.`name`, g.`group`, g.`money`, g.`description`, t.`name` AS 'table_name'
 				        			FROM guest g LEFT JOIN guest_table gt ON gt.id_guest = g.id 
 				        							LEFT JOIN `table` t ON t.id = gt.id_table
 				        			ORDER BY g.id
@@ -405,7 +405,8 @@
 									  <th>Tên</th>
 									  <th>Đàn</th>
 									  <th>Bàn</th>
-									  <th>Mô tả</th>                                
+									  <th>Tiền</td> 
+									  <th>Mô tả</th>               
 								  </tr>
 							  </thead>   
 							  <tbody>
@@ -433,6 +434,7 @@
 						  					?>
 							  			</td>
 							  			<td><?php echo $row['table_name']; ?></td>
+							  			<td><?php echo $row['money']; ?></td>	
 							  			<td><?php echo $row['description']; ?></td>							  			
 							  			<td><a href="guest.php?id=<?php echo $row['id']; ?>">Chọn</a></td>
 							  		</tr> 
